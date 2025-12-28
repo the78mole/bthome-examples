@@ -2,6 +2,8 @@
 
 Beispiel-Projekte für BThome (Bluetooth Low Energy Home) auf Basis von PlatformIO.
 
+> **🚀 Neu hier?** Siehe [Quick Start Guide](QUICKSTART.md) für eine Schritt-für-Schritt-Anleitung!
+
 ## Überblick
 
 Dieses Repository enthält mehrere Beispielprojekte, die zeigen, wie man BLE-Geräte mit verschiedenen Mikrocontrollern implementiert. Die Beispiele beginnen mit grundlegenden BLE Advertisement Funktionen und führen schrittweise zu vollständigen BThome-Implementierungen.

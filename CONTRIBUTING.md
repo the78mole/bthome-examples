@@ -1,0 +1,252 @@
+# Beiträge zum Projekt
+
+Vielen Dank für dein Interesse, zu diesem Projekt beizutragen! Hier findest du Richtlinien, wie du effektiv beitragen kannst.
+
+## Wie kann ich beitragen?
+
+Es gibt mehrere Möglichkeiten, zum Projekt beizutragen:
+
+1. **Neue Beispiele erstellen**: Füge neue BThome-Beispiele hinzu
+2. **Bestehende Beispiele verbessern**: Optimiere Code, füge Features hinzu oder verbessere Dokumentation
+3. **Bugs melden**: Erstelle Issues für gefundene Probleme
+4. **Dokumentation verbessern**: Hilf, die Dokumentation klarer und hilfreicher zu machen
+
+## Entwicklungsumgebung einrichten
+
+1. Forke das Repository
+2. Clone dein Fork:
+   ```bash
+   git clone https://github.com/DEIN-USERNAME/bthome-examples.git
+   cd bthome-examples
+   ```
+3. Öffne das Projekt in VSCode mit DevContainer (siehe [QUICKSTART.md](QUICKSTART.md))
+
+## Neues Beispiel erstellen
+
+### 1. Verzeichnisstruktur
+
+Erstelle ein neues Verzeichnis unter `examples/` mit folgendem Muster:
+
+```
+examples/XX-description-platform/
+├── src/
+│   └── main.cpp
+├── platformio.ini
+└── README.md
+```
+
+**Namenskonvention**: `XX-description-platform`
+- `XX`: Fortlaufende Nummer (01, 02, 03, ...)
+- `description`: Kurze Beschreibung des Beispiels (z.B. `ble-advertisement`, `bthome-temperature`)
+- `platform`: `esp32c3` oder `nrf52840`
+
+### 2. platformio.ini erstellen
+
+Verwende die vorhandenen Beispiele als Vorlage:
+
+**Für ESP32-C3**:
+```ini
+[env:esp32-c3-devkitm-1]
+platform = espressif32
+board = esp32-c3-devkitm-1
+framework = arduino
+monitor_speed = 115200
+upload_speed = 460800
+build_flags = 
+    -DCORE_DEBUG_LEVEL=3
+    -DARDUINO_USB_CDC_ON_BOOT=1
+lib_deps = 
+    ; Füge benötigte Libraries hier hinzu
+```
+
+**Für nRF52840**:
+```ini
+[env:adafruit_feather_nrf52840]
+platform = nordicnrf52
+board = adafruit_feather_nrf52840
+framework = arduino
+monitor_speed = 115200
+upload_protocol = nrfutil
+build_flags = 
+    -DCFG_DEBUG=2
+    -DNRF52840_XXAA
+lib_deps = 
+    adafruit/Adafruit TinyUSB Library @ ^1.7.0
+    ; Füge benötigte Libraries hier hinzu
+```
+
+### 3. main.cpp schreiben
+
+- **Sprache**: Code in Englisch, Kommentare in Deutsch (für Klarheit)
+- **Formatierung**: 2 Leerzeichen Einrückung, Allman-Stil für Klammern
+- **Serielle Ausgabe**: Füge Debug-Ausgaben hinzu, um den Status zu zeigen
+- **Dokumentation**: Kommentiere wichtige Code-Abschnitte
+
+Beispiel-Struktur:
+
+```cpp
+#include <Arduino.h>
+// Weitere includes...
+
+// Konstanten definieren
+#define MY_CONSTANT 1000
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+  
+  Serial.println("Starte Beispiel...");
+  
+  // Initialisierung hier
+}
+
+void loop() {
+  // Hauptlogik hier
+  
+  delay(1000);
+}
+```
+
+### 4. README.md erstellen
+
+Jedes Beispiel benötigt eine detaillierte README.md mit:
+
+```markdown
+# Titel des Beispiels - Plattform
+
+Kurzbeschreibung des Beispiels.
+
+## Hardware-Anforderungen
+
+- Liste der benötigten Hardware
+- Sensoren, Boards, etc.
+
+## Funktionalität
+
+Detaillierte Beschreibung:
+- Was das Beispiel tut
+- Welche Features implementiert sind
+- Technische Details (BLE-Parameter, etc.)
+
+## Kompilieren und Hochladen
+
+### Mit PlatformIO CLI:
+...
+
+### Mit VSCode:
+...
+
+## Testen
+
+Anleitung, wie das Beispiel getestet werden kann.
+
+## Serielle Ausgabe
+
+Beispiel der erwarteten Konsolen-Ausgabe:
+```
+Erwartete Ausgabe hier...
+```
+
+## Nächste Schritte
+
+Mögliche Erweiterungen oder verwandte Themen.
+```
+
+### 5. Testen
+
+Vor dem Erstellen eines Pull Requests:
+
+1. **Kompiliere das Projekt**:
+   ```bash
+   cd examples/XX-dein-beispiel-platform
+   pio run
+   ```
+
+2. **Teste auf Hardware** (wenn möglich):
+   ```bash
+   pio run -t upload
+   pio device monitor
+   ```
+
+3. **Prüfe die Dokumentation**:
+   - Ist die README vollständig?
+   - Sind alle Schritte klar beschrieben?
+   - Funktionieren alle Code-Beispiele?
+
+## Code-Stil
+
+Siehe [.github/copilot-instructions.md](.github/copilot-instructions.md) für detaillierte Code-Stil-Richtlinien.
+
+### Wichtigste Punkte:
+
+- **Einrückung**: 2 Leerzeichen (keine Tabs)
+- **Klammern**: Allman-Stil (öffnende Klammer auf neuer Zeile)
+- **Namenskonventionen**:
+  - Variablen: `camelCase`
+  - Konstanten: `UPPER_SNAKE_CASE`
+  - Funktionen: `camelCase`
+- **Kommentare**: Deutsch für Erklärungen, Englisch für Code-Dokumentation
+- **Maximale Zeilenlänge**: 100 Zeichen
+
+## Pull Request erstellen
+
+1. **Erstelle einen Branch**:
+   ```bash
+   git checkout -b feature/mein-neues-beispiel
+   ```
+
+2. **Committe deine Änderungen**:
+   ```bash
+   git add .
+   git commit -m "Füge Beispiel für XYZ hinzu"
+   ```
+
+3. **Push zum Fork**:
+   ```bash
+   git push origin feature/mein-neues-beispiel
+   ```
+
+4. **Erstelle Pull Request** auf GitHub:
+   - Beschreibe, was dein Beispiel tut
+   - Füge Screenshots oder Beispiel-Ausgaben hinzu
+   - Verweise auf relevante Issues (falls vorhanden)
+
+## Pull Request Checkliste
+
+Bevor du einen Pull Request einreichst, stelle sicher:
+
+- [ ] Code kompiliert ohne Fehler
+- [ ] Code wurde (wenn möglich) auf Hardware getestet
+- [ ] Alle neuen Dateien sind enthalten
+- [ ] README.md ist vollständig und korrekt
+- [ ] Code folgt den Stil-Richtlinien
+- [ ] Keine unnötigen Dateien (Build-Artefakte, etc.) enthalten
+- [ ] Commit-Messages sind aussagekräftig
+- [ ] Changes sind in `examples/` oder Dokumentation (keine Core-Änderungen ohne Diskussion)
+
+## Issues melden
+
+Wenn du einen Bug findest oder eine Verbesserung vorschlagen möchtest:
+
+1. **Prüfe**, ob ein ähnliches Issue bereits existiert
+2. **Erstelle ein neues Issue** mit:
+   - Klare Beschreibung des Problems/Vorschlags
+   - Schritte zur Reproduktion (bei Bugs)
+   - Erwartetes vs. tatsächliches Verhalten
+   - Hardware/Software-Versionen
+   - Serielle Ausgabe oder Fehler-Logs (falls relevant)
+
+## Fragen?
+
+Bei Fragen oder Unklarheiten:
+- Öffne ein Issue mit dem Label `question`
+- Schaue dir existierende Beispiele als Referenz an
+- Konsultiere die [Copilot Instructions](.github/copilot-instructions.md)
+
+## Code of Conduct
+
+Sei respektvoll und konstruktiv in allen Interaktionen. Dieses Projekt soll eine freundliche und einladende Umgebung für alle sein.
+
+## Lizenz
+
+Mit dem Beitragen zum Projekt stimmst du zu, dass deine Beiträge unter der [MIT-Lizenz](LICENSE) lizenziert werden.

@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "name": "bthome-examples",
+      "path": "."
+    },
+    {
+      "name": "01-ble-advertisement-esp32c3",
+      "path": "examples/01-ble-advertisement-esp32c3"
+    },
+    {
+      "name": "01-ble-advertisement-nrf52840",
+      "path": "examples/01-ble-advertisement-nrf52840"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.pio": true,
+      "**/__pycache__": true
+    }
+  }
+}
