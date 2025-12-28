@@ -1,5 +1,8 @@
 #include <Arduino.h>
 
+// Shared manufacturer data - Company ID 0xFFFF + Custom data
+const uint8_t MANUFACTURER_DATA[6] = {0xFF, 0xFF, 0x01, 0x02, 0x03, 0x04};
+
 // Platform-specific includes
 #ifdef PLATFORM_ESP32
   #include <BLEDevice.h>
@@ -8,7 +11,7 @@
   #include <BLEAdvertising.h>
   
   // BLE advertising interval in ms
-  #define BLE_ADVERTISING_INTERVAL 1000
+  #define BLE_ADVERTISING_INTERVAL_MS 1000
   
   BLEAdvertising *pAdvertising;
 #endif
@@ -16,8 +19,8 @@
 #ifdef PLATFORM_NRF52
   #include <bluefruit.h>
   
-  // BLE advertising interval in units of 0.625ms
-  #define BLE_ADVERTISING_INTERVAL 1600  // 1000ms (1600 * 0.625ms)
+  // BLE advertising interval in units of 0.625ms (1000ms = 1600 * 0.625ms)
+  #define BLE_ADVERTISING_INTERVAL_UNITS 1600
   
   BLEDis bledis;    // Device Information Service
 #endif
@@ -49,9 +52,8 @@ void setup() {
   advertisementData.setFlags(0x06); // BR_EDR_NOT_SUPPORTED | LE General Discoverable Mode
   advertisementData.setName("ESP32-C3-BLE");
   
-  // Set manufacturer data (example: Company ID 0xFFFF + custom data)
-  uint8_t manufacturerData[6] = {0xFF, 0xFF, 0x01, 0x02, 0x03, 0x04};
-  advertisementData.setManufacturerData(std::string((char*)manufacturerData, 6));
+  // Set manufacturer data using shared constant
+  advertisementData.setManufacturerData(std::string((char*)MANUFACTURER_DATA, sizeof(MANUFACTURER_DATA)));
   
   pAdvertising->setAdvertisementData(advertisementData);
   
@@ -61,8 +63,8 @@ void setup() {
   pAdvertising->setScanResponseData(scanResponseData);
   
   // Set advertising interval
-  pAdvertising->setMinInterval(BLE_ADVERTISING_INTERVAL);
-  pAdvertising->setMaxInterval(BLE_ADVERTISING_INTERVAL);
+  pAdvertising->setMinInterval(BLE_ADVERTISING_INTERVAL_MS);
+  pAdvertising->setMaxInterval(BLE_ADVERTISING_INTERVAL_MS);
   
   // Start advertising
   pAdvertising->start();
@@ -91,15 +93,13 @@ void setup() {
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addName();
   
-  // Add manufacturer specific data
-  // Format: Company ID (2 bytes, little endian) + Custom data
-  uint8_t manufacturerData[6] = {0xFF, 0xFF, 0x01, 0x02, 0x03, 0x04};
+  // Add manufacturer specific data using shared constant
   Bluefruit.Advertising.addData(BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA, 
-                                manufacturerData, 
-                                sizeof(manufacturerData));
+                                MANUFACTURER_DATA, 
+                                sizeof(MANUFACTURER_DATA));
   
   // Set advertising interval
-  Bluefruit.Advertising.setInterval(BLE_ADVERTISING_INTERVAL, BLE_ADVERTISING_INTERVAL);
+  Bluefruit.Advertising.setInterval(BLE_ADVERTISING_INTERVAL_UNITS, BLE_ADVERTISING_INTERVAL_UNITS);
   
   // Set advertising timeout (0 = continuous)
   Bluefruit.Advertising.setStopCallback(NULL);
