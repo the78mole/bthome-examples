@@ -53,7 +53,7 @@ void setup() {
   advertisementData.setName("ESP32-C3-BLE");
   
   // Set manufacturer data using shared constant
-  advertisementData.setManufacturerData(std::string((char*)MANUFACTURER_DATA, sizeof(MANUFACTURER_DATA)));
+  advertisementData.setManufacturerData(std::string(reinterpret_cast<const char*>(MANUFACTURER_DATA), sizeof(MANUFACTURER_DATA)));
   
   pAdvertising->setAdvertisementData(advertisementData);
   
