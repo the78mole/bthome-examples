@@ -7,9 +7,16 @@ Dieses Repository enthält Beispielprojekte für BThome (Bluetooth Low Energy Ho
 ## Entwicklungsumgebung
 
 - **IDE**: Visual Studio Code mit DevContainer
+- **Container Image**: `ghcr.io/the78mole/platformio:latest`
 - **Build-System**: PlatformIO
 - **Sprachen**: C++, Arduino Framework
 - **Plattformen**: ESP32-C3 (Espressif32), nRF52840 (Nordic nRF52)
+
+## Projekt-Architektur
+
+- **Multi-Platform Design**: Beispiele sollen wenn möglich beide Plattformen in einem Projekt unterstützen
+- **Preprocessor-Direktiven**: Verwende `#ifdef PLATFORM_ESP32` und `#ifdef PLATFORM_NRF52` für plattformspezifischen Code
+- **Gemeinsame platformio.ini**: Definiere beide Umgebungen in einer Datei
 
 ## Code-Richtlinien
 
@@ -77,17 +84,22 @@ Beispiel BThome v2 Payload (unverschlüsselt):
 Neue Beispiele sollten folgende Struktur haben:
 
 ```
-examples/XX-description-platform/
+examples/XX-description/
 ├── src/
-│   └── main.cpp           # Hauptprogramm
-├── platformio.ini         # PlatformIO Konfiguration
+│   └── main.cpp           # Multi-Platform Hauptprogramm
+├── platformio.ini         # PlatformIO Konfiguration (beide Plattformen)
 └── README.md              # Beispiel-Dokumentation (Deutsch)
 ```
 
+**Namenskonvention**: `XX-description` (ohne Plattform-Suffix, da Multi-Platform)
+
 ### PlatformIO Konfiguration
 
-Standard `platformio.ini` für ESP32-C3:
+Standard `platformio.ini` für Multi-Platform Projekte:
 ```ini
+[platformio]
+default_envs = esp32-c3-devkitm-1
+
 [env:esp32-c3-devkitm-1]
 platform = espressif32
 board = esp32-c3-devkitm-1
@@ -97,10 +109,8 @@ upload_speed = 460800
 build_flags = 
     -DCORE_DEBUG_LEVEL=3
     -DARDUINO_USB_CDC_ON_BOOT=1
-```
+    -DPLATFORM_ESP32
 
-Standard `platformio.ini` für nRF52840:
-```ini
 [env:adafruit_feather_nrf52840]
 platform = nordicnrf52
 board = adafruit_feather_nrf52840
@@ -110,9 +120,14 @@ upload_protocol = nrfutil
 build_flags = 
     -DCFG_DEBUG=2
     -DNRF52840_XXAA
+    -DPLATFORM_NRF52
 lib_deps = 
     adafruit/Adafruit TinyUSB Library @ ^1.7.0
 ```
+
+**Wichtig**: 
+- Definiere immer `PLATFORM_ESP32` und `PLATFORM_NRF52` in den build_flags
+- Setze `default_envs` auf die primäre Entwicklungsplattform
 
 ### Dokumentation
 

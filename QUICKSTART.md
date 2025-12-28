@@ -60,19 +60,36 @@ Wenn der Prozess abgeschlossen ist, siehst du **"Dev Container: BThome Examples 
 1. Öffne ein Terminal in VSCode (`Ctrl+`` oder Terminal → New Terminal`)
 2. Navigiere zum Beispiel:
    ```bash
-   cd examples/01-ble-advertisement-esp32c3
+   cd examples/01-ble-advertisement
    ```
-3. Kompiliere das Projekt:
+3. Kompiliere das Projekt für die Standard-Plattform (ESP32-C3):
    ```bash
    pio run
+   ```
+4. Oder kompiliere für eine spezifische Plattform:
+   ```bash
+   # Für ESP32-C3
+   pio run -e esp32-c3-devkitm-1
+   
+   # Für nRF52840
+   pio run -e adafruit_feather_nrf52840
    ```
 
 ## Schritt 6: Auf Hardware hochladen
 
 1. Verbinde dein ESP32-C3 oder nRF52840 Board per USB
 2. In VSCode:
+   - Wähle die gewünschte Umgebung in der PlatformIO-Toolbar (unten links)
    - Klicke auf **→ (Pfeil-Symbol)** in der PlatformIO-Toolbar
-   - Oder im Terminal: `pio run -t upload`
+3. Oder im Terminal:
+   ```bash
+   # Standard-Plattform (ESP32-C3)
+   pio run -t upload
+   
+   # Spezifische Plattform
+   pio run -e esp32-c3-devkitm-1 -t upload
+   pio run -e adafruit_feather_nrf52840 -t upload
+   ```
 
 **Für nRF52840**: Möglicherweise musst du das Board in den Bootloader-Modus versetzen (Doppelklick auf Reset-Button).
 

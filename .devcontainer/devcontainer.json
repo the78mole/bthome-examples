@@ -1,8 +1,6 @@
 {
   "name": "BThome Examples - PlatformIO",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
+  "image": "ghcr.io/the78mole/platformio:latest",
   "customizations": {
     "vscode": {
       "extensions": [

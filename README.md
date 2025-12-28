@@ -47,16 +47,20 @@ Dieses Projekt verwendet VSCode mit einem DevContainer, der alle notwendigen Too
 
 ### 01 - BLE Advertisement
 
-Grundlegende BLE Advertisement Implementierung ohne BThome-Protokoll.
+Grundlegende BLE Advertisement Implementierung ohne BThome-Protokoll für beide Plattformen.
 
-- **[ESP32-C3 Version](examples/01-ble-advertisement-esp32c3/README.md)**: Verwendet die ESP32 Arduino BLE Library
-- **[nRF52840 Version](examples/01-ble-advertisement-nrf52840/README.md)**: Verwendet die Adafruit Bluefruit Library
+- **[Beispiel-Dokumentation](examples/01-ble-advertisement/README.md)**: Multi-Platform Projekt mit einer gemeinsamen Codebasis
+
+**Unterstützte Plattformen:**
+- ESP32-C3 (verwendet Arduino BLE Library)
+- nRF52840 (verwendet Adafruit Bluefruit Library)
 
 **Features:**
 - BLE Device Name setzen
 - Manufacturer Data senden
 - Kontinuierliches Advertising
 - Serielle Debug-Ausgabe
+- Multi-Platform Code mit Preprocessor-Direktiven
 
 ### Weitere Beispiele (geplant)
 
@@ -71,15 +75,27 @@ Grundlegende BLE Advertisement Implementierung ohne BThome-Protokoll.
 
 Mit PlatformIO CLI:
 ```bash
-cd examples/01-ble-advertisement-esp32c3
+cd examples/01-ble-advertisement
+
+# Standard-Plattform (ESP32-C3) kompilieren
 pio run
+
+# Spezifische Plattform kompilieren
+pio run -e esp32-c3-devkitm-1
+pio run -e adafruit_feather_nrf52840
 ```
 
 ### Ein Projekt hochladen
 
 ```bash
-cd examples/01-ble-advertisement-esp32c3
+cd examples/01-ble-advertisement
+
+# Standard-Plattform hochladen
 pio run -t upload
+
+# Spezifische Plattform hochladen
+pio run -e esp32-c3-devkitm-1 -t upload
+pio run -e adafruit_feather_nrf52840 -t upload
 ```
 
 ### Serielle Ausgabe überwachen
@@ -100,18 +116,12 @@ Verwenden Sie die PlatformIO-Toolbar am unteren Bildschirmrand:
 ```
 bthome-examples/
 ├── .devcontainer/          # DevContainer Konfiguration
-│   ├── devcontainer.json   # VSCode DevContainer Setup
-│   └── Dockerfile          # Container mit PlatformIO
+│   └── devcontainer.json   # VSCode DevContainer Setup (nutzt ghcr.io/the78mole/platformio)
 ├── examples/               # Beispiel-Projekte
-│   ├── 01-ble-advertisement-esp32c3/
-│   │   ├── src/
-│   │   │   └── main.cpp
-│   │   ├── platformio.ini
-│   │   └── README.md
-│   └── 01-ble-advertisement-nrf52840/
+│   └── 01-ble-advertisement/
 │       ├── src/
-│       │   └── main.cpp
-│       ├── platformio.ini
+│       │   └── main.cpp    # Multi-Platform Code
+│       ├── platformio.ini  # Konfiguration für beide Plattformen
 │       └── README.md
 ├── .gitignore
 ├── LICENSE
