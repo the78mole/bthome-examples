@@ -45,7 +45,6 @@ void setup() {
   // Set advertising timeout (0 = continuous)
   Bluefruit.Advertising.setStopCallback(NULL);
   Bluefruit.Advertising.restartOnDisconnect(true);
-  Bluefruit.Advertising.setInterval(BLE_ADVERTISING_INTERVAL, BLE_ADVERTISING_INTERVAL);
   Bluefruit.Advertising.setFastTimeout(0);  // Disable fast advertising timeout
   
   // Start advertising
