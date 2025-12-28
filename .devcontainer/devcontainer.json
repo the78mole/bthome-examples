@@ -1,0 +1,22 @@
+{
+  "name": "BThome Examples - PlatformIO",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "platformio.platformio-ide",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "platformio-ide.useBuiltinPIOCore": true,
+        "platformio-ide.disablePIOHomeStartup": false
+      }
+    }
+  },
+  "postCreateCommand": "pio system info",
+  "remoteUser": "vscode"
+}
