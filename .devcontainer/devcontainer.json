@@ -1,6 +1,15 @@
 {
   "name": "BThome Examples - PlatformIO",
   "image": "ghcr.io/the78mole/platformio:latest",
+  "runArgs": [
+    "--device=/dev/ttyACM0",
+    "--device=/dev/ttyACM1",
+    "--device=/dev/ttyUSB0",
+    "--device=/dev/ttyUSB1"
+  ],
+  "mounts": [
+    "source=/dev,target=/dev,type=bind"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
