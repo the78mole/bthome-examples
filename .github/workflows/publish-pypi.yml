@@ -50,6 +50,16 @@ jobs:
         echo "Version: ${{ steps.semver.outputs.version }}"
         echo "Version Tag: ${{ steps.semver.outputs.version_tag }}"
 
+        # Add to GitHub Actions Summary
+        cat >> $GITHUB_STEP_SUMMARY <<EOF
+        ## 📦 Neue Version berechnet
+
+        **Version:** \`${{ steps.semver.outputs.version }}\`
+        **Git-Tag:** \`${{ steps.semver.outputs.version_tag }}\`
+
+        Diese Version wird für das Release und die PyPI-Veröffentlichung verwendet.
+        EOF
+
   create-release:
     name: Create GitHub Release
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -84,6 +94,15 @@ jobs:
         \`\`\`" \
           --latest
 
+        # Add to GitHub Actions Summary
+        cat >> $GITHUB_STEP_SUMMARY <<EOF
+        ## 🏷️ GitHub Release erstellt
+
+        **Release:** [${{ needs.version.outputs.version_tag }}](https://github.com/${{ github.repository }}/releases/tag/${{ needs.version.outputs.version_tag }})
+
+        Das Release wurde erfolgreich auf GitHub erstellt.
+        EOF
+
   build:
     name: Build distribution
     needs: [version, create-release]
@@ -103,6 +122,8 @@ jobs:
         pip install build twine hatch-vcs
 
     - name: Build package
+      env:
+        SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.version.outputs.version }}
       run: |
         cd tools
         python -m build
@@ -111,6 +132,19 @@ jobs:
       run: |
         cd tools
         twine check dist/*
+
+        # Add to GitHub Actions Summary
+        cat >> $GITHUB_STEP_SUMMARY <<EOF
+        ## 🔨 Package Build
+
+        **Version:** \`${{ needs.version.outputs.version }}\`
+
+        Folgende Distributions wurden erstellt:
+
+        \`\`\`
+        $(ls -lh dist/)
+        \`\`\`
+        EOF
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -166,3 +200,26 @@ jobs:
 
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
+
+    - name: Add PyPI Summary
+      run: |
+        cat >> $GITHUB_STEP_SUMMARY <<EOF
+        ## 🚀 PyPI Veröffentlichung
+
+        **Package:** [bthome-logger](https://pypi.org/project/bthome-logger/)
+        **Version:** \`${{ needs.version.outputs.version }}\`
+
+        ### Installation
+
+        \`\`\`bash
+        pip install bthome-logger==${{ needs.version.outputs.version }}
+        # oder
+        uv tool install bthome-logger==${{ needs.version.outputs.version }}
+        \`\`\`
+
+        ### Verwendung
+
+        \`\`\`bash
+        bthome-logger
+        \`\`\`
+        EOF
