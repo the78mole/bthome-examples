@@ -2,7 +2,7 @@
 
 ## Projekt-Kontext
 
-Dieses Repository enthält Beispielprojekte für BThome (Bluetooth Low Energy Home) Geräte, entwickelt mit PlatformIO. Die Zielplattformen sind ESP32-C3 und nRF52840 Mikrocontroller.
+Dieses Repository enthält Beispielprojekte für BThome (Bluetooth Low Energy Home) Geräte, entwickelt mit PlatformIO. Die Zielplattform ist ESP32-S3.
 
 ## Entwicklungsumgebung
 
@@ -10,13 +10,10 @@ Dieses Repository enthält Beispielprojekte für BThome (Bluetooth Low Energy Ho
 - **Container Image**: `ghcr.io/the78mole/platformio:latest`
 - **Build-System**: PlatformIO
 - **Sprachen**: C++, Arduino Framework
-- **Plattformen**: ESP32-C3 (Espressif32), nRF52840 (Nordic nRF52)
-
-## Projekt-Architektur
-
-- **Multi-Platform Design**: Beispiele sollen wenn möglich beide Plattformen in einem Projekt unterstützen
-- **Preprocessor-Direktiven**: Verwende `#ifdef PLATFORM_ESP32` und `#ifdef PLATFORM_NRF52` für plattformspezifischen Code
-- **Gemeinsame platformio.ini**: Definiere beide Umgebungen in einer Datei
+- **Primäre Plattform**: ESP32-S3 (Espressif32)
+- **Hardware**: ESP32-S3 DevKitC-1 mit USB-UART Converter
+- **Serielle Kommunikation**: Hardware UART über USB-UART Converter (115200 Baud)
+- **RGB LED**: WS2812 an GPIO48 (Standard für ESP32-S3 DevKitC-1)
 
 ## Code-Richtlinien
 
@@ -36,17 +33,18 @@ Dieses Repository enthält Beispielprojekte für BThome (Bluetooth Low Energy Ho
 
 ### Plattform-spezifische Anforderungen
 
-#### ESP32-C3
+#### ESP32-S3 DevKitC-1
 - Verwende die Arduino BLE Library (`BLEDevice.h`, `BLEServer.h`, etc.)
+- Verwende die BThomev2-Arduino-Bibliothek für BThome-spezifische Funktionen
+- **Serielle Kommunikation**: Hardware UART, keine USB CDC Flags benötigt
 - Standard-Baudrate: 115200
-- USB CDC aktivieren: `ARDUINO_USB_CDC_ON_BOOT=1`
-- Debug-Level über `CORE_DEBUG_LEVEL` setzen
-
-#### nRF52840
-- Verwende die Adafruit Bluefruit Library (`bluefruit.h`)
-- Include TinyUSB Library für USB-Unterstützung
-- Standard-Upload-Protokoll: `nrfutil`
-- TX Power: Typisch +4 dBm, maximal +8 dBm
+- Upload-Geschwindigkeit: 921600
+- Debug-Level über `CORE_DEBUG_LEVEL` setzen (0-5, Standard: 3)
+- **RGB LED**: Adafruit NeoPixel Library für WS2812 an GPIO48
+  - Helligkeit: 50 (0-255) für Augenschonung
+  - Farbformat: NEO_GRB + NEO_KHZ800
+- **Wichtig**: Keine PSRAM-Flags für Boards ohne PSRAM
+- **Wichtig**: Keine USB CDC Flags bei Verwendung von USB-UART Converter
 
 ### BLE Advertisement Best Practices
 
@@ -95,39 +93,32 @@ examples/XX-description/
 
 ### PlatformIO Konfiguration
 
-Standard `platformio.ini` für Multi-Platform Projekte:
+Standard `platformio.ini` für ESP32-S3 Projekte:
 ```ini
 [platformio]
-default_envs = esp32-c3-devkitm-1
+default_envs = esp32-s3-devkitc-1
 
-[env:esp32-c3-devkitm-1]
+[env:esp32-s3-devkitc-1]
 platform = espressif32
-board = esp32-c3-devkitm-1
+board = esp32-s3-devkitc-1
 framework = arduino
+
 monitor_speed = 115200
-upload_speed = 460800
+upload_speed = 921600
+
 build_flags = 
     -DCORE_DEBUG_LEVEL=3
-    -DARDUINO_USB_CDC_ON_BOOT=1
-    -DPLATFORM_ESP32
 
-[env:adafruit_feather_nrf52840]
-platform = nordicnrf52
-board = adafruit_feather_nrf52840
-framework = arduino
-monitor_speed = 115200
-upload_protocol = nrfutil
-build_flags = 
-    -DCFG_DEBUG=2
-    -DNRF52840_XXAA
-    -DPLATFORM_NRF52
 lib_deps = 
-    adafruit/Adafruit TinyUSB Library @ ^1.7.0
+    adafruit/Adafruit NeoPixel @ ^1.12.0
 ```
 
 **Wichtig**: 
-- Definiere immer `PLATFORM_ESP32` und `PLATFORM_NRF52` in den build_flags
-- Setze `default_envs` auf die primäre Entwicklungsplattform
+- **Keine USB CDC Flags** bei Verwendung von USB-UART Converter
+- **Keine PSRAM Flags** für Boards ohne PSRAM (ESP32-S3-DevKitC-1-N8)
+- Upload-Geschwindigkeit: 921600 Baud (schneller als Standard 460800)
+- Debug-Level: 0 (keine Logs) bis 5 (sehr verbose), Standard: 3
+- Library-Versionen mit `^` für Kompatibilität (z.B. `^1.12.0` = 1.12.0 bis <2.0.0)
 
 ### Dokumentation
 
@@ -162,22 +153,37 @@ Jedes Beispiel benötigt eine README.md mit:
 Vor dem Commit sollten neue Beispiele kompiliert werden:
 
 ```bash
-cd examples/XX-example-name-platform
+cd examples/XX-example-name
 pio run
+```
+
+### Upload und Test
+
+```bash
+# Kompilieren und hochladen
+pio run -t upload
+
+# Serial Monitor starten
+pio device monitor
+
+# Oder kombiniert
+pio run -t upload && pio device monitor
 ```
 
 ### Code-Checks
 
 - Stelle sicher, dass der Code ohne Warnungen kompiliert
-- Teste auf beiden Plattformen (ESP32-C3 und nRF52840), wenn möglich
+- Teste auf Hardware (ESP32-S3 DevKitC-1)
+- Überprüfe serielle Ausgabe im Monitor
+- Bei BLE: Teste mit nRF Connect App (Android/iOS)
 
 ## Abhängigkeiten
 
 ### Minimale externe Abhängigkeiten
 
 - Bevorzuge eingebaute Libraries
-- Für ESP32: Arduino BLE Library (Teil des Frameworks)
-- Für nRF52840: Adafruit Bluefruit Library (stabile, gut dokumentierte Library)
+- Für ESP32-S3: Arduino BLE Library (Teil des Frameworks, keine Installation nötig)
+- Für RGB LED (WS2812): Adafruit NeoPixel Library (stabil, gut dokumentiert)
 - Für zusätzliche Sensoren: Bevorzuge Adafruit Libraries (gute Qualität, breite Unterstützung)
 
 ### Library-Versionen
@@ -205,8 +211,9 @@ pio boards nordicnrf52
 
 - [BThome Spezifikation](https://bthome.io/format/)
 - [PlatformIO Dokumentation](https://docs.platformio.org/)
-- [ESP32-C3 Arduino BLE Library](https://github.com/espressif/arduino-esp32/tree/master/libraries/BLE)
-- [Adafruit Bluefruit nRF52 Library](https://github.com/adafruit/Adafruit_nRF52_Arduino)
+- [ESP32-S3 Arduino BLE Library](https://github.com/espressif/arduino-esp32/tree/master/libraries/BLE)
+- [Adafruit NeoPixel Library](https://github.com/adafruit/Adafruit_NeoPixel)
+- [ESP32-S3 DevKitC-1 Dokumentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html)
 - [Home Assistant BThome Integration](https://www.home-assistant.io/integrations/bthome/)
 
 ## Fragen und Unterstützung

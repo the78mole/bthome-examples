@@ -1,50 +1,42 @@
 # BLE Advertisement Example
 
-Dies ist ein einfaches Beispiel für BLE (Bluetooth Low Energy) Advertisement mit ESP32-C3 und nRF52840 Mikrocontrollern.
+Dies ist ein einfaches Beispiel für BLE (Bluetooth Low Energy) Advertisement mit ESP32-S3 Mikrocontroller.
 
 ## Hardware-Anforderungen
 
-Eines der folgenden Boards:
-- **ESP32-C3**: ESP32-C3 Development Board (z.B. ESP32-C3-DevKitM-1)
-- **nRF52840**: nRF52840 Development Board (z.B. Adafruit Feather nRF52840 Express)
+- **ESP32-S3 DevKitC-1**: Espressif ESP32-S3 Development Board
+- USB-UART Converter (z.B. CP2102, CH340) für serielle Kommunikation
 - USB Kabel für Programmierung und Stromversorgung
+
+**RGB LED**: Das Board verfügt über eine serielle RGB LED (WS2812) am GPIO48, die bei jedem Advertisement blau blinkt.
 
 ## Funktionalität
 
 Dieses Beispiel demonstriert:
-- Initialisierung des BLE-Stacks auf beiden Plattformen
+- Initialisierung des BLE-Stacks auf ESP32-S3
 - Erstellen und Senden von BLE Advertisement Packets
 - Setzen von Device Name und Manufacturer Data
 - Kontinuierliches Broadcasting von BLE Advertisements
-- Plattform-spezifischer Code mit Preprocessor-Direktiven
-
-## Multi-Platform Architektur
-
-Dieses Beispiel verwendet ein **Single-Source-Design** mit plattformspezifischem Code:
-- Eine `main.cpp` Datei für beide Plattformen
-- Verwendung von `#ifdef PLATFORM_ESP32` und `#ifdef PLATFORM_NRF52` für plattformspezifischen Code
-- Gemeinsame `platformio.ini` mit mehreren Umgebungen
+- Visuelle Anzeige durch RGB-LED (blinkt blau bei jedem Advertisement)
+- Serielle Kommunikation über Hardware UART
 
 ## BLE Advertisement Details
 
-### ESP32-C3 (env:esp32-c3-devkitm-1)
-- **Device Name**: ESP32-C3-BLE
-- **Library**: Arduino BLE (ESP32 native)
+### ESP32-S3 DevKitC-1 (env:esp32-s3-devkitc-1)
+- **Device Name**: MAKE-ESP32-S3
+- **Library**: ESP32 BLE Arduino v2.0.0 (framework-integriert)
 - **Manufacturer Data**: 0xFFFF (Company ID) + 0x01020304 (Custom Data)
 - **Advertising Interval**: 1000ms
 - **Flags**: BR_EDR_NOT_SUPPORTED | LE General Discoverable Mode
+- **RGB LED**: GPIO48, WS2812, blinkt 50ms blau bei jedem Advertisement
 
-### nRF52840 (env:adafruit_feather_nrf52840)
-- **Device Name**: nRF52840-BLE
-- **Library**: Adafruit Bluefruit
-- **Manufacturer Data**: 0xFFFF (Company ID) + 0x01020304 (Custom Data)
-- **Advertising Interval**: 1000ms (1600 * 0.625ms)
-- **TX Power**: +4 dBm
-- **Flags**: LE General Discoverable Mode
+### Verwendete Libraries
+- **ESP32 BLE Arduino**: BLE Stack für ESP32 (Teil des Arduino Frameworks)
+- **Adafruit NeoPixel**: v1.15.2 für RGB LED Steuerung
 
 ## Kompilieren und Hochladen
 
-### Standard-Plattform (ESP32-C3):
+### Mit PlatformIO CLI:
 
 ```bash
 cd examples/01-ble-advertisement
@@ -52,34 +44,17 @@ pio run -t upload
 pio device monitor
 ```
 
-### Spezifische Plattform auswählen:
-
-```bash
-# Für ESP32-C3
-pio run -e esp32-c3-devkitm-1 -t upload
-
-# Für nRF52840
-pio run -e adafruit_feather_nrf52840 -t upload
-```
-
-### Beide Plattformen bauen:
-
-```bash
-# Beide Umgebungen kompilieren
-pio run
-
-# Beide Umgebungen hochladen (Board muss jeweils angeschlossen sein)
-pio run -t upload
-```
-
 ### Mit VSCode:
 
 1. Öffne den Workspace in VSCode mit DevContainer
 2. Öffne das Projekt-Verzeichnis
-3. Wähle die gewünschte Umgebung in der PlatformIO-Toolbar
-4. Verwende die PlatformIO-Buttons zum Kompilieren und Hochladen
+3. Verwende die PlatformIO-Buttons zum Kompilieren und Hochladen
+4. Öffne den Serial Monitor (115200 Baud)
 
-**Für nRF52840**: Möglicherweise musst du das Board in den Bootloader-Modus versetzen (Doppelklick auf Reset-Button).
+### Hinweise:
+- Upload-Geschwindigkeit: 921600 Baud
+- Monitor-Geschwindigkeit: 115200 Baud
+- Der ESP32-S3 wird automatisch erkannt und über esptool programmiert
 
 ## Testen
 
@@ -96,48 +71,72 @@ Nach dem Hochladen können Sie die BLE Advertisements mit verschiedenen Tools ü
 
 ## Serielle Ausgabe
 
-### ESP32-C3:
 ```
-Starting BLE Advertisement Example for ESP32-C3
+=================================
+BLE Advertisement Example
+ESP32-S3 DevKitC-1
+=================================
+
+Initializing BLE...
+[   562][I][BLEDevice.cpp:577] getAdvertising(): create advertising
 BLE Advertising started!
-Device Name: ESP32-C3-BLE
+Device Name: MAKE-ESP32-S3
 Manufacturer Data: FF FF 01 02 03 04
-Still advertising...
+
+Setup complete!
+Advertising continuously...
 ```
 
-### nRF52840:
-```
-Starting BLE Advertisement Example for nRF52840
-BLE Advertising started!
-Device Name: nRF52840-BLE
-Manufacturer Data: FF FF 01 02 03 04
-Still advertising...
-```
+**Hinweis**: Die Debug-Ausgaben von BLEDevice.cpp sind durch `-DCORE_DEBUG_LEVEL=3` aktiviert.
 
 ## Code-Struktur
 
 ```cpp
-// Plattform-spezifische Includes
-#ifdef PLATFORM_ESP32
-  #include <BLEDevice.h>
-  // ESP32-spezifischer Code
-#endif
+#include <Arduino.h>
+#include <BLEDevice.h>
+#include <BLEAdvertising.h>
+#include <Adafruit_NeoPixel.h>
 
-#ifdef PLATFORM_NRF52
-  #include <bluefruit.h>
-  // nRF52-spezifischer Code
-#endif
+// BLE Konfiguration
+#define BLE_DEVICE_NAME "MAKE-ESP32-S3"
+#define BLE_ADVERTISING_INTERVAL_MS 1000
+
+// RGB LED Konfiguration
+#define RGB_LED_PIN 48
+#define RGB_LED_COUNT 1
+#define RGB_LED_BRIGHTNESS 50
+
+Adafruit_NeoPixel rgbLed(RGB_LED_COUNT, RGB_LED_PIN, NEO_GRB + NEO_KHZ800);
+
+void setupBLE() {
+  // BLE Initialisierung
+  BLEDevice::init(BLE_DEVICE_NAME);
+  BLEServer *pServer = BLEDevice::createServer();
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  // ... Advertisement Konfiguration
+  pAdvertising->start();
+}
 
 void setup() {
-  // Gemeinsamer Initialisierungscode
+  // RGB LED initialisieren
+  rgbLed.begin();
+  rgbLed.setBrightness(RGB_LED_BRIGHTNESS);
   
-  #ifdef PLATFORM_ESP32
-    // ESP32-spezifische Initialisierung
-  #endif
+  // Serielle Kommunikation
+  Serial.begin(115200);
   
-  #ifdef PLATFORM_NRF52
-    // nRF52-spezifische Initialisierung
-  #endif
+  // BLE starten
+  setupBLE();
+}
+
+void loop() {
+  // Blau blinken bei Advertisement
+  rgbLed.setPixelColor(0, rgbLed.Color(0, 0, 255));
+  rgbLed.show();
+  delay(50);
+  rgbLed.clear();
+  rgbLed.show();
+  delay(950);
 }
 ```
 
