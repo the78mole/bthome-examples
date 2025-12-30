@@ -1,19 +1,35 @@
 #!/usr/bin/env python3
 """
 BThome Logger - Python Edition
-Scannt nach BLE-Geräten und zeigt BThome v2 Advertisements an
+Scans for BLE devices and displays BThome v2 advertisements
 """
 
 import asyncio
 import struct
 from datetime import datetime
+from importlib.metadata import PackageNotFoundError, version
 
+import typer
 from bleak import BleakScanner
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
 
+# Global variable for device name filter
+DEVICE_NAME_FILTER = "MAKE"
 
-# ANSI Farbcodes für schöne Terminal-Ausgabe
+# Global variable for verbose mode
+VERBOSE = False
+
+
+def get_version() -> str:
+    """Get the package version"""
+    try:
+        return version("bthome-logger")
+    except PackageNotFoundError:
+        return "dev"
+
+
+# ANSI color codes for terminal output
 class Colors:
     RESET = "\033[0m"
     BOLD = "\033[1m"
@@ -26,59 +42,62 @@ class Colors:
     GRAY = "\033[90m"
 
 
-# BThome v2 Object IDs mit Faktoren und Einheiten
+# BThome v2 Object IDs with factors and units
 BTHOME_OBJECTS = {
     0x00: {"name": "Packet ID", "factor": 1, "unit": "", "size": 1},
-    0x01: {"name": "Batterie", "factor": 1, "unit": "%", "size": 1},
+    0x01: {"name": "Battery", "factor": 1, "unit": "%", "size": 1},
     0x02: {
-        "name": "Temperatur",
+        "name": "Temperature",
         "factor": 0.01,
         "unit": "°C",
         "signed": True,
         "size": 2,
     },
-    0x03: {"name": "Luftfeuchtigkeit", "factor": 0.01, "unit": "%", "size": 2},
-    0x04: {"name": "Luftdruck", "factor": 0.01, "unit": "hPa", "size": 3},
-    0x05: {"name": "Beleuchtung", "factor": 0.01, "unit": "lux", "size": 3},
-    0x06: {"name": "Masse", "factor": 0.01, "unit": "kg", "signed": True, "size": 2},
+    0x03: {"name": "Humidity", "factor": 0.01, "unit": "%", "size": 2},
+    0x04: {"name": "Pressure", "factor": 0.01, "unit": "hPa", "size": 3},
+    0x05: {"name": "Illuminance", "factor": 0.01, "unit": "lux", "size": 3},
+    0x06: {"name": "Mass", "factor": 0.01, "unit": "kg", "signed": True, "size": 2},
     0x07: {
-        "name": "Masse (lbs)",
+        "name": "Mass (lbs)",
         "factor": 0.01,
         "unit": "lbs",
         "signed": True,
         "size": 2,
     },
-    0x08: {"name": "Taupunkt", "factor": 0.01, "unit": "°C", "signed": True, "size": 2},
-    0x09: {"name": "Anzahl", "factor": 1, "unit": "", "size": 1},
-    0x0A: {"name": "Energie", "factor": 0.001, "unit": "kWh", "size": 3},
-    0x0B: {"name": "Leistung", "factor": 0.01, "unit": "W", "size": 3},
-    0x0C: {"name": "Spannung", "factor": 0.001, "unit": "V", "size": 2},
+    0x08: {
+        "name": "Dew Point",
+        "factor": 0.01,
+        "unit": "°C",
+        "signed": True,
+        "size": 2,
+    },
+    0x09: {"name": "Count", "factor": 1, "unit": "", "size": 1},
+    0x0A: {"name": "Energy", "factor": 0.001, "unit": "kWh", "size": 3},
+    0x0B: {"name": "Power", "factor": 0.01, "unit": "W", "size": 3},
+    0x0C: {"name": "Voltage", "factor": 0.001, "unit": "V", "size": 2},
     0x0D: {"name": "PM2.5", "factor": 1, "unit": "µg/m³", "size": 2},
     0x0E: {"name": "PM10", "factor": 1, "unit": "µg/m³", "size": 2},
     0x0F: {"name": "Boolean", "factor": 1, "unit": "", "size": 1},
-    0x10: {"name": "Leistung (On)", "factor": 1, "unit": "", "size": 1},
-    0x11: {"name": "Öffnung", "factor": 1, "unit": "", "size": 1},
+    0x10: {"name": "Power (On)", "factor": 1, "unit": "", "size": 1},
+    0x11: {"name": "Opening", "factor": 1, "unit": "", "size": 1},
     0x12: {"name": "CO2", "factor": 1, "unit": "ppm", "size": 2},
     0x13: {"name": "TVOC", "factor": 1, "unit": "µg/m³", "size": 2},
-    0x14: {"name": "Feuchte", "factor": 0.01, "unit": "%", "size": 2},
+    0x14: {"name": "Moisture", "factor": 0.01, "unit": "%", "size": 2},
 }
 
 # BThome Company ID
 BTHOME_COMPANY_ID = 0xFCD2
 
-# Filter für Geräte-Namen (nur MAKE-Geräte)
-DEVICE_NAME_PREFIX = "MAKE"
-
 
 def parse_bthome_packet(data: bytes) -> dict:
     """
-    Parst ein BThome v2 Paket und gibt die dekodierten Werte zurück
+    Parses a BThome v2 packet and returns decoded values
 
     Args:
-        data: Raw Manufacturer Data ohne Company ID
+        data: Raw manufacturer data without company ID
 
     Returns:
-        Dictionary mit Device Info und dekodierten Werten
+        Dictionary with device info and decoded values
     """
     if len(data) < 1:
         return None
@@ -92,7 +111,7 @@ def parse_bthome_packet(data: bytes) -> dict:
 
     index = 1
 
-    # Objects dekodieren
+    # Decode objects
     while index < len(data):
         object_id = data[index]
         index += 1
@@ -152,62 +171,58 @@ def parse_bthome_packet(data: bytes) -> dict:
 
 
 def format_timestamp() -> str:
-    """Gibt einen formatierten Zeitstempel zurück"""
+    """Formats the current timestamp"""
     return datetime.now().strftime("%H:%M:%S.%f")[:-3]
 
 
 def print_header():
-    """Druckt den Programm-Header"""
+    """Prints the program header"""
     print(f"\n{Colors.BOLD}{Colors.CYAN}{'='*70}{Colors.RESET}")
     print(f"{Colors.BOLD}{Colors.CYAN}🔵 BThome Logger - Python Edition{Colors.RESET}")
-    print(f"{Colors.CYAN}Scannt nach BLE-Geräten mit BThome v2 Protocol{Colors.RESET}")
+    print(f"{Colors.CYAN}Scans for BLE devices with BThome v2 protocol{Colors.RESET}")
     print(f"{Colors.BOLD}{Colors.CYAN}{'='*70}{Colors.RESET}\n")
     print(
-        f"{Colors.YELLOW}Filter: Geräte mit '{DEVICE_NAME_PREFIX}' im Namen{Colors.RESET}"
+        f"{Colors.YELLOW}Filter: Devices with '{DEVICE_NAME_FILTER}' in name{Colors.RESET}"
     )
-    print(f"{Colors.GRAY}Drücke Ctrl+C zum Beenden{Colors.RESET}\n")
+    print(f"{Colors.GRAY}Press Ctrl+C to exit{Colors.RESET}\n")
 
 
 def print_separator():
-    """Druckt eine Trennlinie"""
+    """Prints a separator line"""
     print(f"{Colors.GRAY}{'-'*70}{Colors.RESET}")
 
 
 def advertisement_callback(device: BLEDevice, advertisement_data: AdvertisementData):
-    """
-    Callback-Funktion für empfangene Advertisements
+    """Called when a BLE advertisement is received"""
 
-    Args:
-        device: BLE Device
-        advertisement_data: Advertisement Data
-    """
-    # Filter: Nur Geräte mit "MAKE" im Namen
-    if not device.name or not device.name.startswith(DEVICE_NAME_PREFIX):
+    # Apply device name filter
+    if device.name and DEVICE_NAME_FILTER not in device.name:
         return
 
-    # Prüfe auf Manufacturer Data
+    # Only show devices with manufacturer data
     if not advertisement_data.manufacturer_data:
         return
 
-    # Suche nach BThome Company ID
+    # Check if it's BThome data (Company ID 0xFCD2 = 64722)
     if BTHOME_COMPANY_ID not in advertisement_data.manufacturer_data:
-        # Zeige andere Manufacturer Data
-        for company_id, data in advertisement_data.manufacturer_data.items():
-            hex_data = " ".join(f"{b:02x}" for b in data)
-            print(
-                f"{Colors.GRAY}[{format_timestamp()}]{Colors.RESET} "
-                f"{Colors.BLUE}{device.name}{Colors.RESET} "
-                f"({Colors.GRAY}{device.address}{Colors.RESET}) "
-                f"| Company ID: 0x{company_id:04X} | Data: {hex_data} | "
-                f"RSSI: {advertisement_data.rssi} dBm"
-            )
+        # Show other manufacturer data only in verbose mode
+        if VERBOSE:
+            for company_id, data in advertisement_data.manufacturer_data.items():
+                hex_data = " ".join(f"{b:02x}" for b in data)
+                print(
+                    f"{Colors.GRAY}[{format_timestamp()}]{Colors.RESET} "
+                    f"{Colors.BLUE}{device.name}{Colors.RESET} "
+                    f"({Colors.GRAY}{device.address}{Colors.RESET}) "
+                    f"| Company ID: 0x{company_id:04X} | Data: {hex_data} | "
+                    f"RSSI: {advertisement_data.rssi} dBm"
+                )
         return
 
-    # BThome-Daten gefunden!
+    # BThome data found!
     raw_data = advertisement_data.manufacturer_data[BTHOME_COMPANY_ID]
     hex_data = " ".join(f"{b:02x}" for b in raw_data)
 
-    # Header mit Gerätename und Zeitstempel
+    # Header with device name and timestamp
     print_separator()
     print(
         f"{Colors.GRAY}[{format_timestamp()}]{Colors.RESET} "
@@ -229,23 +244,23 @@ def advertisement_callback(device: BLEDevice, advertisement_data: AdvertisementD
     # Raw Data
     print(f"  {Colors.GRAY}Raw:{Colors.RESET} {Colors.CYAN}{hex_data}{Colors.RESET}")
 
-    # BThome-Paket parsen
+    # Parse BThome packet
     parsed = parse_bthome_packet(raw_data)
 
     if parsed:
         # Device Info
         encrypted_str = (
-            f"{Colors.RED}verschlüsselt{Colors.RESET}"
+            f"{Colors.RED}encrypted{Colors.RESET}"
             if parsed["encrypted"]
-            else f"{Colors.GREEN}unverschlüsselt{Colors.RESET}"
+            else f"{Colors.GREEN}unencrypted{Colors.RESET}"
         )
         print(
             f"  {Colors.GRAY}BThome:{Colors.RESET} {parsed['version']} ({encrypted_str})"
         )
 
-        # Dekodierte Werte
+        # Decoded values
         if parsed["values"]:
-            print(f"  {Colors.GRAY}Werte:{Colors.RESET}")
+            print(f"  {Colors.GRAY}Values:{Colors.RESET}")
             for val in parsed["values"]:
                 if val["unit"]:
                     value_str = f"{val['value']:.2f} {val['unit']}"
@@ -257,36 +272,80 @@ def advertisement_callback(device: BLEDevice, advertisement_data: AdvertisementD
                     f"{Colors.YELLOW}{value_str}{Colors.RESET}"
                 )
         else:
-            print(f"    {Colors.GRAY}(Keine dekodierten Werte){Colors.RESET}")
+            print(f"    {Colors.GRAY}(No decoded values){Colors.RESET}")
     else:
-        print(f"  {Colors.RED}Fehler beim Parsen des BThome-Pakets{Colors.RESET}")
+        print(f"  {Colors.RED}Error parsing BThome packet{Colors.RESET}")
 
     print()  # Leerzeile
 
 
 async def scan_forever():
-    """Scannt kontinuierlich nach BLE-Geräten"""
-    print_header()
-    print(f"{Colors.GREEN}✓ Scanner gestartet...{Colors.RESET}\n")
+    """Scans continuously for BLE devices"""
+    print(f"{Colors.GREEN}✓ Scanner started...{Colors.RESET}\n")
 
     scanner = BleakScanner(detection_callback=advertisement_callback)
 
     try:
         await scanner.start()
 
-        # Scanne für immer (oder bis Ctrl+C)
+        # Scan forever (or until Ctrl+C)
         while True:
             await asyncio.sleep(1.0)
 
     except KeyboardInterrupt:
-        print(f"\n\n{Colors.YELLOW}Scanner wird gestoppt...{Colors.RESET}")
+        print(f"\n\n{Colors.YELLOW}Stopping scanner...{Colors.RESET}")
     finally:
         await scanner.stop()
-        print(f"{Colors.GREEN}✓ Scanner gestoppt{Colors.RESET}\n")
+        print(f"{Colors.GREEN}✓ Scanner stopped{Colors.RESET}\n")
 
 
-def main():
-    """Hauptfunktion"""
+app = typer.Typer(
+    help="BThome v2 BLE Advertisement Logger - Scans and displays BThome devices"
+)
+
+
+def version_callback(show_version: bool):
+    """Show version and exit"""
+    if show_version:
+        typer.echo(f"bthome-logger {get_version()}")
+        raise typer.Exit()
+
+
+@app.command()
+def main(
+    device_filter: str = typer.Option(
+        "MAKE",
+        "--filter",
+        "-f",
+        help="Filter BLE devices by this name (substring matching)",
+    ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Show all BLE advertisements, not just BThome devices",
+    ),
+    show_version: bool = typer.Option(
+        None,
+        "--version",
+        callback=version_callback,
+        is_eager=True,
+        help="Show version and exit",
+    ),
+):
+    """
+    Continuously scans for BLE devices and displays BThome v2 advertisements.
+
+    The scanner filters devices by the specified name (substring matching).
+    Press Ctrl+C to exit.
+    """
+    global DEVICE_NAME_FILTER, VERBOSE
+    DEVICE_NAME_FILTER = device_filter
+    VERBOSE = verbose
+
+    # Print header after filter is set
+    print_header()
+
     try:
         asyncio.run(scan_forever())
     except KeyboardInterrupt:
@@ -294,4 +353,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    app()
