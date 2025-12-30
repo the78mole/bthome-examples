@@ -1,6 +1,6 @@
 [project]
 name = "bthome-logger"
-version = "0.1.0"
+dynamic = ["version"]
 description = "BThome v2 BLE Advertisement Logger for debugging and monitoring BThome devices"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -39,12 +39,18 @@ Documentation = "https://github.com/the78mole/bthome-examples/blob/main/tools/RE
 bthome-logger = "bthome_logger:main"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
+[tool.hatch.version]
+source = "vcs"
+raw-options = { version_scheme = "no-guess-dev" }
+
+[tool.hatch.build.hooks.vcs]
+version-file = "_version.py"
+
 [tool.hatch.build.targets.wheel]
-packages = ["."]
-only-include = ["bthome-logger.py"]
+only-include = ["bthome_logger.py"]
 
 [tool.hatch.build.targets.sdist]
-only-include = ["bthome-logger.py", "README.md", "requirements.txt", "pyproject.toml"]
+include = ["bthome_logger.py", "README.md", "requirements.txt", "pyproject.toml", "LICENSE"]
