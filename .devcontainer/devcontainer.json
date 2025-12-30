@@ -2,10 +2,7 @@
   "name": "BThome Examples - PlatformIO",
   "image": "ghcr.io/the78mole/platformio:latest",
   "runArgs": [
-    "--device=/dev/ttyACM0",
-    "--device=/dev/ttyACM1",
-    "--device=/dev/ttyUSB0",
-    "--device=/dev/ttyUSB1"
+    "--privileged"
   ],
   "mounts": [
     "source=/dev,target=/dev,type=bind"
@@ -24,6 +21,5 @@
       }
     }
   },
-  "postCreateCommand": "pio system info",
-  "remoteUser": "vscode"
+  "postCreateCommand": "pio system info"
 }

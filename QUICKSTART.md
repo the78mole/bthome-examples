@@ -25,6 +25,8 @@ Oder öffne VSCode und wähle **File → Open Folder** und navigiere zum Reposit
 
 ## Schritt 3: Im DevContainer öffnen
 
+Du kannst PlatformIO unter Linux auch direkt installieren, die Verwendung des DevContainers ist aber die saubere Variante, da alle Abhängigkeiten und Tools isoliert sind und man so keine Konflikte mit anderen Projekten bekommt.
+
 Wenn VSCode das Projekt öffnet, sollte eine Benachrichtigung erscheinen:
 
 **"Folder contains a Dev Container configuration file. Reopen folder to develop in a container"**
@@ -66,18 +68,10 @@ Wenn der Prozess abgeschlossen ist, siehst du **"Dev Container: BThome Examples 
    ```bash
    pio run
    ```
-4. Oder kompiliere für eine spezifische Plattform:
-   ```bash
-   # Für ESP32-C3
-   pio run -e esp32-c3-devkitm-1
-   
-   # Für nRF52840
-   pio run -e adafruit_feather_nrf52840
-   ```
 
 ## Schritt 6: Auf Hardware hochladen
 
-1. Verbinde dein ESP32-C3 oder nRF52840 Board per USB
+1. Verbinde dein ESP32-S3 Board per USB (beim ESP32-S3-DevKitC-1 den rechten USB-C-Port verwenden)
 2. In VSCode:
    - Wähle die gewünschte Umgebung in der PlatformIO-Toolbar (unten links)
    - Klicke auf **→ (Pfeil-Symbol)** in der PlatformIO-Toolbar
@@ -85,13 +79,7 @@ Wenn der Prozess abgeschlossen ist, siehst du **"Dev Container: BThome Examples 
    ```bash
    # Standard-Plattform (ESP32-C3)
    pio run -t upload
-   
-   # Spezifische Plattform
-   pio run -e esp32-c3-devkitm-1 -t upload
-   pio run -e adafruit_feather_nrf52840 -t upload
    ```
-
-**Für nRF52840**: Möglicherweise musst du das Board in den Bootloader-Modus versetzen (Doppelklick auf Reset-Button).
 
 ## Schritt 7: Serielle Ausgabe anzeigen
 
@@ -111,9 +99,7 @@ Installiere eine BLE-Scanner-App auf deinem Smartphone:
 - **Android**: [nRF Connect](https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp)
 - **iOS**: [nRF Connect](https://apps.apple.com/app/nrf-connect/id1054362403) oder [LightBlue](https://apps.apple.com/app/lightblue/id557428110)
 
-Öffne die App und scanne nach BLE-Geräten. Du solltest dein Gerät sehen:
-- **ESP32-C3**: "ESP32-C3-BLE"
-- **nRF52840**: "nRF52840-BLE"
+Öffne die App und scanne nach BLE-Geräten. Du solltest dein Gerät `MAKE-ESP32-S3` sehen.
 
 ## Problemlösung
 
@@ -138,7 +124,6 @@ Installiere eine BLE-Scanner-App auf deinem Smartphone:
 - Installiere fehlende Plattformen:
   ```bash
   pio platform install espressif32
-  pio platform install nordicnrf52
   ```
 
 ## Nächste Schritte
@@ -152,5 +137,4 @@ Installiere eine BLE-Scanner-App auf deinem Smartphone:
 
 - [PlatformIO Dokumentation](https://docs.platformio.org/)
 - [BThome Spezifikation](https://bthome.io/format/)
-- [ESP32-C3 Arduino Dokumentation](https://docs.espressif.com/projects/arduino-esp32/)
-- [Adafruit nRF52 Arduino Dokumentation](https://learn.adafruit.com/bluefruit-nrf52-feather-learning-guide)
+- [ESP32-S3 Arduino Dokumentation](https://docs.espressif.com/projects/arduino-esp32/)
