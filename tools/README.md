@@ -8,7 +8,20 @@ Ein zuverlässiges Python-Tool zum Scannen und Anzeigen von BThome v2 Advertisem
 
 ### Installation
 
-**Mit uv (empfohlen):**
+**Aus PyPI (empfohlen):**
+
+```bash
+# Systemweit installieren
+pip install bthome-logger
+
+# Oder mit pipx (isolierte Installation)
+pipx install bthome-logger
+
+# Tool ausführen
+bthome-logger
+```
+
+**Mit uv (für Entwicklung):**
 
 ```bash
 # uv installieren (falls noch nicht vorhanden)
@@ -18,14 +31,34 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 cd tools
 
 # Abhängigkeiten installieren und Tool ausführen
-uv run bthome-logger.py
+uv run bthome_logger.py
+```
+
+**Aus dem Repository:**
+
+```bash
+# Repository klonen
+git clone https://github.com/the78mole/bthome-examples.git
+cd bthome-examples/tools
+
+# Mit pip
+pip install -e .
+
+# Mit uv
+uv run bthome_logger.py
 ```
 
 ### Verwendung
 
 ```bash
-# Mit uv (empfohlen - installiert automatisch Dependencies)
-uv run bthome-logger.py
+# Wenn über PyPI/pipx installiert
+bthome-logger
+
+# Wenn lokal mit uv
+uv run bthome_logger.py
+
+# Wenn mit pip -e installiert
+python -m bthome_logger
 ```
 
 ### Features
