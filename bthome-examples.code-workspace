@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "name": "bthome-examples",
+      "path": "."
+    },
+    {
+      "name": "01-ble-advertisement",
+      "path": "examples/01-ble-advertisement"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.pio": true,
+      "**/__pycache__": true
+    }
+  }
+}
