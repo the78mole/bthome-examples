@@ -20,7 +20,7 @@ Dieses Repository enthält Beispielprojekte für BThome (Bluetooth Low Energy Ho
 ### Allgemein
 
 1. **Sprache**: Kommentare und Dokumentation in Deutsch, Code in Englisch
-2. **Formatierung**: 
+2. **Formatierung**:
    - Einrückung: 2 Leerzeichen
    - Klammern: Allman-Stil (Klammern auf neuer Zeile)
    - Maximale Zeilenlänge: 100 Zeichen
@@ -34,6 +34,7 @@ Dieses Repository enthält Beispielprojekte für BThome (Bluetooth Low Energy Ho
 ### Plattform-spezifische Anforderungen
 
 #### ESP32-S3 DevKitC-1
+
 - Verwende die Arduino BLE Library (`BLEDevice.h`, `BLEServer.h`, etc.)
 - Verwende die BThomev2-Arduino-Bibliothek für BThome-spezifische Funktionen
 - **Serielle Kommunikation**: Hardware UART, keine USB CDC Flags benötigt
@@ -48,7 +49,7 @@ Dieses Repository enthält Beispielprojekte für BThome (Bluetooth Low Energy Ho
 
 ### BLE Advertisement Best Practices
 
-1. **Advertising Interval**: 
+1. **Advertising Interval**:
    - Standard: 1000ms für kontinuierliches Advertising
    - Batteriebetrieb: 2000-5000ms für längere Batterielebensdauer
 
@@ -71,7 +72,8 @@ Beim Implementieren von BThome-Features:
 4. **Verschlüsselung**: Optional, aber empfohlen für sensible Daten
 
 Beispiel BThome v2 Payload (unverschlüsselt):
-```
+
+```c
 0x40              // Device Information (bit 0=Encryption, bit 1-5=Reserved, bit 6=Trigger, bit 7=Reserved)
 0x02 0xCA 0x09    // Temperature: 25.06°C (0x09CA = 2506, Factor 0.01)
 0x03 0xBF 0x13    // Humidity: 50.55% (0x13BF = 5055, Factor 0.01)
@@ -81,7 +83,7 @@ Beispiel BThome v2 Payload (unverschlüsselt):
 
 Neue Beispiele sollten folgende Struktur haben:
 
-```
+```text
 examples/XX-description/
 ├── src/
 │   └── main.cpp           # Multi-Platform Hauptprogramm
@@ -94,6 +96,7 @@ examples/XX-description/
 ### PlatformIO Konfiguration
 
 Standard `platformio.ini` für ESP32-S3 Projekte:
+
 ```ini
 [platformio]
 default_envs = esp32-s3-devkitc-1
@@ -106,14 +109,15 @@ framework = arduino
 monitor_speed = 115200
 upload_speed = 921600
 
-build_flags = 
+build_flags =
     -DCORE_DEBUG_LEVEL=3
 
-lib_deps = 
+lib_deps =
     adafruit/Adafruit NeoPixel @ ^1.12.0
 ```
 
-**Wichtig**: 
+**Wichtig**:
+
 - **Keine USB CDC Flags** bei Verwendung von USB-UART Converter
 - **Keine PSRAM Flags** für Boards ohne PSRAM (ESP32-S3-DevKitC-1-N8)
 - Upload-Geschwindigkeit: 921600 Baud (schneller als Standard 460800)
@@ -219,6 +223,7 @@ pio boards nordicnrf52
 ## Fragen und Unterstützung
 
 Bei Fragen zum Code-Stil oder zur Implementierung:
+
 1. Prüfe existierende Beispiele im Repository
 2. Konsultiere die BThome-Spezifikation
 3. Siehe PlatformIO und Library-Dokumentationen

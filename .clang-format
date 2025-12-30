@@ -1,0 +1,36 @@
+# Clang-Format Konfiguration für C/C++ Code
+# Basiert auf Google Style mit Anpassungen
+
+BasedOnStyle: Google
+Language: Cpp
+Standard: c++11
+
+# Einrückung: 2 Leerzeichen (wie in den Copilot-Instructions definiert)
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+
+# Klammern: Allman-Stil (Klammern auf neuer Zeile)
+BreakBeforeBraces: Allman
+
+# Zeilenlänge: 100 Zeichen (wie in den Copilot-Instructions)
+ColumnLimit: 100
+
+# Pointer und Referenzen
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# Funktions-Parameter
+AllowAllParametersOfDeclarationOnNextLine: true
+BinPackParameters: false
+
+# Namespaces
+NamespaceIndentation: None
+
+# Kommentare
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 2
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Preserve

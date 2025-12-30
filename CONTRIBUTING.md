@@ -15,10 +15,12 @@ Es gibt mehrere Möglichkeiten, zum Projekt beizutragen:
 
 1. Forke das Repository
 2. Clone dein Fork:
+
    ```bash
    git clone https://github.com/DEIN-USERNAME/bthome-examples.git
    cd bthome-examples
    ```
+
 3. Öffne das Projekt in VSCode mit DevContainer (siehe [QUICKSTART.md](QUICKSTART.md))
 
 ## Neues Beispiel erstellen
@@ -27,7 +29,7 @@ Es gibt mehrere Möglichkeiten, zum Projekt beizutragen:
 
 Erstelle ein neues Verzeichnis unter `examples/` mit folgendem Muster:
 
-```
+```text
 examples/XX-description/
 ├── src/
 │   └── main.cpp
@@ -36,10 +38,12 @@ examples/XX-description/
 ```
 
 **Namenskonvention**: `XX-description`
+
 - `XX`: Fortlaufende Nummer (01, 02, 03, ...)
 - `description`: Kurze Beschreibung des Beispiels (z.B. `ble-advertisement`, `bthome-temperature`)
 
 **Multi-Platform Projekte**: Die Beispiele sollen wenn möglich beide Plattformen (ESP32-C3 und nRF52840) in einem Projekt unterstützen:
+
 - Verwende `#ifdef PLATFORM_ESP32` und `#ifdef PLATFORM_NRF52` für plattformspezifischen Code
 - Definiere beide Umgebungen in der `platformio.ini`
 
@@ -57,11 +61,11 @@ board = esp32-c3-devkitm-1
 framework = arduino
 monitor_speed = 115200
 upload_speed = 460800
-build_flags = 
+build_flags =
     -DCORE_DEBUG_LEVEL=3
     -DARDUINO_USB_CDC_ON_BOOT=1
     -DPLATFORM_ESP32
-lib_deps = 
+lib_deps =
     ; Füge benötigte Libraries hier hinzu
 
 [env:adafruit_feather_nrf52840]
@@ -70,11 +74,11 @@ board = adafruit_feather_nrf52840
 framework = arduino
 monitor_speed = 115200
 upload_protocol = nrfutil
-build_flags = 
+build_flags =
     -DCFG_DEBUG=2
     -DNRF52840_XXAA
     -DPLATFORM_NRF52
-lib_deps = 
+lib_deps =
     adafruit/Adafruit TinyUSB Library @ ^1.7.0
     ; Füge benötigte Libraries hier hinzu
 ```
@@ -108,12 +112,12 @@ Beispiel-Struktur für Multi-Platform Code:
 void setup() {
   Serial.begin(115200);
   delay(1000);
-  
+
   #ifdef PLATFORM_ESP32
   Serial.println("ESP32 Initialisierung...");
   // ESP32-spezifische Initialisierung
   #endif
-  
+
   #ifdef PLATFORM_NRF52
   Serial.println("nRF52 Initialisierung...");
   // nRF52-spezifische Initialisierung
@@ -165,7 +169,8 @@ pio run -t upload
 pio run -e esp32-c3-devkitm-1 -t upload
 ```
 
-### Mit VSCode:
+### Mit VSCode
+
 Wähle die Umgebung in der PlatformIO-Toolbar und verwende die Buttons.
 
 ## Testen
@@ -176,19 +181,24 @@ Anleitung, wie das Beispiel auf beiden Plattformen getestet werden kann.
 
 Beispiel der erwarteten Konsolen-Ausgabe für beide Plattformen:
 
-### ESP32-C3:
-```
+### ESP32-C3
+
+```text
 Erwartete Ausgabe für ESP32-C3...
 ```
 
-### nRF52840:
-```
+### nRF52840
+
+```text
 Erwartete Ausgabe für nRF52840...
 ```
 
 ## Nächste Schritte
 
 Mögliche Erweiterungen oder verwandte Themen.
+
+```text
+(Beispiel-Text)
 ```
 
 ### 5. Testen
@@ -196,22 +206,24 @@ Mögliche Erweiterungen oder verwandte Themen.
 Vor dem Erstellen eines Pull Requests:
 
 1. **Kompiliere das Projekt für beide Plattformen**:
+
    ```bash
    cd examples/XX-dein-beispiel
    pio run -e esp32-c3-devkitm-1
    pio run -e adafruit_feather_nrf52840
    ```
 
-2. **Teste auf Hardware** (wenn möglich, beide Plattformen):
+1. **Teste auf Hardware** (wenn möglich, beide Plattformen):
+
    ```bash
    pio run -e esp32-c3-devkitm-1 -t upload
    pio device monitor
-   
+
    pio run -e adafruit_feather_nrf52840 -t upload
    pio device monitor
    ```
 
-3. **Prüfe die Dokumentation**:
+1. **Prüfe die Dokumentation**:
    - Ist die README vollständig?
    - Sind alle Schritte klar beschrieben?
    - Funktionieren alle Code-Beispiele?
@@ -220,7 +232,7 @@ Vor dem Erstellen eines Pull Requests:
 
 Siehe [.github/copilot-instructions.md](.github/copilot-instructions.md) für detaillierte Code-Stil-Richtlinien.
 
-### Wichtigste Punkte:
+### Wichtigste Punkte
 
 - **Einrückung**: 2 Leerzeichen (keine Tabs)
 - **Klammern**: Allman-Stil (öffnende Klammer auf neuer Zeile)
@@ -234,17 +246,20 @@ Siehe [.github/copilot-instructions.md](.github/copilot-instructions.md) für de
 ## Pull Request erstellen
 
 1. **Erstelle einen Branch**:
+
    ```bash
    git checkout -b feature/mein-neues-beispiel
    ```
 
 2. **Committe deine Änderungen**:
+
    ```bash
    git add .
    git commit -m "Füge Beispiel für XYZ hinzu"
    ```
 
 3. **Push zum Fork**:
+
    ```bash
    git push origin feature/mein-neues-beispiel
    ```
@@ -282,6 +297,7 @@ Wenn du einen Bug findest oder eine Verbesserung vorschlagen möchtest:
 ## Fragen?
 
 Bei Fragen oder Unklarheiten:
+
 - Öffne ein Issue mit dem Label `question`
 - Schaue dir existierende Beispiele als Referenz an
 - Konsultiere die [Copilot Instructions](.github/copilot-instructions.md)

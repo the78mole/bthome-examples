@@ -29,11 +29,12 @@ Du kannst PlatformIO unter Linux auch direkt installieren, die Verwendung des De
 
 Wenn VSCode das Projekt öffnet, sollte eine Benachrichtigung erscheinen:
 
-**"Folder contains a Dev Container configuration file. Reopen folder to develop in a container"**
+> "Folder contains a Dev Container configuration file. Reopen folder to develop in a container"
 
 Klicke auf **"Reopen in Container"**.
 
 Alternativ:
+
 1. Drücke `F1` oder `Ctrl+Shift+P` (Windows/Linux) / `Cmd+Shift+P` (Mac)
 2. Suche nach **"Dev Containers: Reopen in Container"**
 3. Wähle den Befehl aus
@@ -43,6 +44,7 @@ Alternativ:
 ## Schritt 4: Warten auf Container-Initialisierung
 
 VSCode zeigt den Fortschritt in der unteren rechten Ecke an:
+
 - "Starting Dev Container..."
 - "Building image..."
 - "Running postCreateCommand..."
@@ -51,20 +53,23 @@ Wenn der Prozess abgeschlossen ist, siehst du **"Dev Container: BThome Examples 
 
 ## Schritt 5: Ein Beispiel kompilieren
 
-### Mit der PlatformIO-Toolbar:
+### Mit der PlatformIO-Toolbar
 
 1. Öffne eines der Beispiel-Verzeichnisse in der Seitenleiste
 2. Am unteren Rand von VSCode siehst du die PlatformIO-Toolbar
 3. Klicke auf das **✓ (Häkchen-Symbol)** um zu kompilieren
 
-### Mit dem Terminal:
+### Mit dem Terminal
 
 1. Öffne ein Terminal in VSCode (`Ctrl+`` oder Terminal → New Terminal`)
 2. Navigiere zum Beispiel:
+
    ```bash
    cd examples/01-ble-advertisement
    ```
+
 3. Kompiliere das Projekt für die Standard-Plattform (ESP32-C3):
+
    ```bash
    pio run
    ```
@@ -76,6 +81,7 @@ Wenn der Prozess abgeschlossen ist, siehst du **"Dev Container: BThome Examples 
    - Wähle die gewünschte Umgebung in der PlatformIO-Toolbar (unten links)
    - Klicke auf **→ (Pfeil-Symbol)** in der PlatformIO-Toolbar
 3. Oder im Terminal:
+
    ```bash
    # Standard-Plattform (ESP32-C3)
    pio run -t upload
@@ -87,7 +93,8 @@ Wenn der Prozess abgeschlossen ist, siehst du **"Dev Container: BThome Examples 
 - Oder im Terminal: `pio device monitor`
 
 Du solltest die Debug-Ausgabe sehen:
-```
+
+```text
 Starting BLE Advertisement Example...
 BLE Advertising started!
 ...
@@ -96,6 +103,7 @@ BLE Advertising started!
 ## Testen der BLE-Advertisement
 
 Installiere eine BLE-Scanner-App auf deinem Smartphone:
+
 - **Android**: [nRF Connect](https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp)
 - **iOS**: [nRF Connect](https://apps.apple.com/app/nrf-connect/id1054362403) oder [LightBlue](https://apps.apple.com/app/lightblue/id557428110)
 
@@ -118,10 +126,13 @@ Installiere eine BLE-Scanner-App auf deinem Smartphone:
 ### Build-Fehler
 
 - Prüfe, ob die richtigen Plattformen installiert sind:
+
   ```bash
   pio platform list
   ```
+
 - Installiere fehlende Plattformen:
+
   ```bash
   pio platform install espressif32
   ```

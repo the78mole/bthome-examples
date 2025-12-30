@@ -29,7 +29,7 @@ Das Beispiel implementiert einen vollständigen BThome v2 Temperatursensor:
 
 Das Advertisement enthält folgende Daten:
 
-```
+```text
 Manufacturer Data:
 0xD2 0xFC          // Company ID: 0xFCD2 (BTHome, Little Endian)
 0x40               // Device Info: BThome v2, unverschlüsselt
@@ -97,7 +97,7 @@ pio run -e esp32-s3-devkitc-1 -t upload
 
 Nach dem Upload solltest du folgende Ausgabe sehen:
 
-```
+```text
 =================================
 BThome Temperatursensor Example
 ESP32-S3 DevKitC-1
@@ -118,7 +118,7 @@ BLE Advertisement aktualisiert - Temperatur: 42.89°C | BThome Payload: d2 fc 40
 
 ### 2. BLE Scanner verwenden
 
-**Android/iOS: nRF Connect App**
+#### Android/iOS: nRF Connect App
 
 1. Öffne nRF Connect
 2. Scanne nach BLE-Geräten
@@ -176,7 +176,7 @@ float temperatureC = value / 100.0;
 
 Beispiel einer vollständigen Session:
 
-```
+```text
 =================================
 BThome Temperatursensor Example
 ESP32-S3 DevKitC-1
@@ -200,7 +200,7 @@ BLE Advertisement aktualisiert - Temperatur: 42.67°C | BThome Payload: d2 fc 40
 
 Mögliche Erweiterungen für dieses Beispiel:
 
-1. **Externe Temperatursensoren**: 
+1. **Externe Temperatursensoren**:
    - BME280/BME680 für präzise Umgebungstemperatur
    - DS18B20 für wasserdichte Messungen
    - DHT22 für Temperatur + Luftfeuchtigkeit

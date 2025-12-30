@@ -26,12 +26,14 @@ Dieses Projekt verwendet VSCode mit einem DevContainer, der alle notwendigen Too
 ### Erste Schritte
 
 1. Repository klonen:
+
    ```bash
    git clone https://github.com/the78mole/bthome-examples.git
    cd bthome-examples
    ```
 
 2. In VSCode öffnen:
+
    ```bash
    code .
    ```
@@ -52,10 +54,12 @@ Grundlegende BLE Advertisement Implementierung ohne BThome-Protokoll für beide 
 - **[Beispiel-Dokumentation](examples/01-ble-advertisement/README.md)**: Multi-Platform Projekt mit einer gemeinsamen Codebasis
 
 **Unterstützte Plattformen:**
+
 - ESP32-C3 (verwendet Arduino BLE Library)
 - nRF52840 (verwendet Adafruit Bluefruit Library)
 
 **Features:**
+
 - BLE Device Name setzen
 - Manufacturer Data senden
 - Kontinuierliches Advertising
@@ -74,6 +78,7 @@ Grundlegende BLE Advertisement Implementierung ohne BThome-Protokoll für beide 
 ### Ein Projekt kompilieren
 
 Mit PlatformIO CLI:
+
 ```bash
 cd examples/01-ble-advertisement
 
@@ -107,13 +112,14 @@ pio device monitor
 ### Mit VSCode
 
 Verwenden Sie die PlatformIO-Toolbar am unteren Bildschirmrand:
+
 - ✓ (Häkchen): Kompilieren
 - → (Pfeil): Hochladen
 - 🔌 (Stecker): Seriellen Monitor öffnen
 
 ## Struktur
 
-```
+```text
 bthome-examples/
 ├── .devcontainer/          # DevContainer Konfiguration
 │   └── devcontainer.json   # VSCode DevContainer Setup (nutzt ghcr.io/the78mole/platformio)

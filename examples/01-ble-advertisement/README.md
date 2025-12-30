@@ -13,6 +13,7 @@ Dies ist ein einfaches Beispiel für BLE (Bluetooth Low Energy) Advertisement mi
 ## Funktionalität
 
 Dieses Beispiel demonstriert:
+
 - Initialisierung des BLE-Stacks auf ESP32-S3
 - Erstellen und Senden von BLE Advertisement Packets
 - Setzen von Device Name und Manufacturer Data
@@ -23,6 +24,7 @@ Dieses Beispiel demonstriert:
 ## BLE Advertisement Details
 
 ### ESP32-S3 DevKitC-1 (env:esp32-s3-devkitc-1)
+
 - **Device Name**: MAKE-ESP32-S3
 - **Library**: ESP32 BLE Arduino v2.0.0 (framework-integriert)
 - **Manufacturer Data**: 0xFFFF (Company ID) + 0x01020304 (Custom Data)
@@ -31,12 +33,13 @@ Dieses Beispiel demonstriert:
 - **RGB LED**: GPIO48, WS2812, blinkt 50ms blau bei jedem Advertisement
 
 ### Verwendete Libraries
+
 - **ESP32 BLE Arduino**: BLE Stack für ESP32 (Teil des Arduino Frameworks)
 - **Adafruit NeoPixel**: v1.15.2 für RGB LED Steuerung
 
 ## Kompilieren und Hochladen
 
-### Mit PlatformIO CLI:
+### Mit PlatformIO CLI
 
 ```bash
 cd examples/01-ble-advertisement
@@ -44,14 +47,15 @@ pio run -t upload
 pio device monitor
 ```
 
-### Mit VSCode:
+### Mit VSCode
 
 1. Öffne den Workspace in VSCode mit DevContainer
 2. Öffne das Projekt-Verzeichnis
 3. Verwende die PlatformIO-Buttons zum Kompilieren und Hochladen
 4. Öffne den Serial Monitor (115200 Baud)
 
-### Hinweise:
+### Hinweise
+
 - Upload-Geschwindigkeit: 921600 Baud
 - Monitor-Geschwindigkeit: 115200 Baud
 - Der ESP32-S3 wird automatisch erkannt und über esptool programmiert
@@ -60,18 +64,20 @@ pio device monitor
 
 Nach dem Hochladen können Sie die BLE Advertisements mit verschiedenen Tools überprüfen:
 
-### Smartphone Apps:
+### Smartphone Apps
+
 - **nRF Connect** (Android/iOS) - empfohlen
 - **BLE Scanner** (Android)
 - **LightBlue** (iOS)
 
-### Computer Tools:
+### Computer Tools
+
 - **hcitool** (Linux): `sudo hcitool lescan`
 - **BluetoothLE Explorer** (Windows 10+)
 
 ## Serielle Ausgabe
 
-```
+```text
 =================================
 BLE Advertisement Example
 ESP32-S3 DevKitC-1
@@ -121,10 +127,10 @@ void setup() {
   // RGB LED initialisieren
   rgbLed.begin();
   rgbLed.setBrightness(RGB_LED_BRIGHTNESS);
-  
+
   // Serielle Kommunikation
   Serial.begin(115200);
-  
+
   // BLE starten
   setupBLE();
 }
@@ -143,6 +149,7 @@ void loop() {
 ## Nächste Schritte
 
 Dieses Beispiel dient als Grundlage für komplexere BLE-Anwendungen:
+
 - Hinzufügen von BThome-Format zu den Advertisement Data
 - Senden von Sensor-Daten
 - Implementierung von Power Management

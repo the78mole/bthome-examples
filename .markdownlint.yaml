@@ -1,0 +1,36 @@
+# Markdownlint Konfiguration
+# Dokumentation: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+# Standard-Regeln aktiviert
+default: true
+
+# Angepasste Regeln
+MD013:
+  # Zeilenlänge nicht erzwingen (Code-Blöcke können lang sein)
+  line_length: 300
+  code_blocks: false
+  tables: false
+
+MD033:
+  # Erlaube HTML in Markdown (für komplexe Formatierung)
+  allowed_elements: ['br', 'details', 'summary', 'img', 'a', 'kbd']
+
+MD040:
+  # Erlaube Code-Blöcke ohne Sprach-Spezifikation (für generische Ausgaben)
+  allowed_languages: []
+
+MD041:
+  # Erste Zeile muss nicht H1 sein (READMEs haben oft Badges)
+  level: 1
+
+MD024:
+  # Erlaube doppelte Überschriften (z.B. "Installation" in verschiedenen Abschnitten)
+  siblings_only: true
+
+MD029:
+  # Erlaube verschiedene Ordered List Styles
+  style: "one_or_ordered"
+
+MD036:
+  # Erlaube Emphasis für Hervorhebungen
+  punctuation: ".,;:!?。，；：！？"

@@ -9,6 +9,7 @@ Ein zuverlässiges Python-Tool zum Scannen und Anzeigen von BThome v2 Advertisem
 ### Installation
 
 **Mit uv (empfohlen):**
+
 ```bash
 # uv installieren (falls noch nicht vorhanden)
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -39,7 +40,7 @@ uv run bthome-logger.py
 
 ### Ausgabe-Beispiel
 
-```
+```text
 ======================================================================
 🔵 BThome Logger - Python Edition
 Scannt nach BLE-Geräten mit BThome v2 Protocol
@@ -68,6 +69,7 @@ Drücke Ctrl+C zum Beenden
 **Problem:** Keine Bluetooth-Berechtigung
 
 **Lösung (Linux):**
+
 ```bash
 # Füge Benutzer zur bluetooth Gruppe hinzu
 sudo usermod -a -G bluetooth $USER
