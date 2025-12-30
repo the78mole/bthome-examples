@@ -37,7 +37,7 @@ Issues = "https://github.com/the78mole/bthome-examples/issues"
 Documentation = "https://github.com/the78mole/bthome-examples/blob/main/tools/README.md"
 
 [project.scripts]
-bthome-logger = "bthome_logger:main"
+bthome-logger = "bthome_logger:app"
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]

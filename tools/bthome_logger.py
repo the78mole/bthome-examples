@@ -304,13 +304,6 @@ app = typer.Typer(
 )
 
 
-def version_callback(show_version: bool):
-    """Show version and exit"""
-    if show_version:
-        typer.echo(f"bthome-logger {get_version()}")
-        raise typer.Exit()
-
-
 @app.command()
 def main(
     device_filter: str = typer.Option(
@@ -325,11 +318,11 @@ def main(
         "-v",
         help="Show all BLE advertisements, not just BThome devices",
     ),
-    show_version: bool = typer.Option(
-        None,
+    version: bool = typer.Option(
+        False,
         "--version",
-        callback=version_callback,
-        is_eager=True,
+        "-V",
+        is_flag=True,
         help="Show version and exit",
     ),
 ):
@@ -339,6 +332,10 @@ def main(
     The scanner filters devices by the specified name (substring matching).
     Press Ctrl+C to exit.
     """
+    if version:
+        print(f"bthome-logger {get_version()}")
+        return
+
     global DEVICE_NAME_FILTER, VERBOSE
     DEVICE_NAME_FILTER = device_filter
     VERBOSE = verbose

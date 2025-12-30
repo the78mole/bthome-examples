@@ -1,111 +1,125 @@
 # BThome Logger Tools
 
-Dieses Verzeichnis enthält Tools zum Testen und Debuggen von BThome-Geräten.
+This directory contains tools for testing and debugging BThome devices.
 
 ## 🐍 Python BThome Logger
 
-Ein zuverlässiges Python-Tool zum Scannen und Anzeigen von BThome v2 Advertisements.
+A reliable Python tool for scanning and displaying BThome v2 advertisements.
 
 ### Installation
 
-**Aus PyPI (empfohlen):**
+**From PyPI (recommended):**
 
 ```bash
-# Systemweit installieren
-pip install bthome-logger
+# Install as isolated tool with uv (recommended)
+uv tool install bthome-logger
 
-# Oder mit pipx (isolierte Installation)
+# Or with pipx
 pipx install bthome-logger
 
-# Tool ausführen
-bthome-logger
+# Or system-wide with pip
+pip install bthome-logger
 ```
 
-**Mit uv (für Entwicklung):**
+**For development:**
 
 ```bash
-# uv installieren (falls noch nicht vorhanden)
+# Install uv if not already available
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Ins tools-Verzeichnis wechseln
+# Change to tools directory
 cd tools
 
-# Abhängigkeiten installieren und Tool ausführen
+# Install dependencies and run tool
 uv run bthome_logger.py
 ```
 
-**Aus dem Repository:**
+**From repository:**
 
 ```bash
-# Repository klonen
+# Clone repository
 git clone https://github.com/the78mole/bthome-examples.git
 cd bthome-examples/tools
 
-# Mit pip
+# With pip
 pip install -e .
 
-# Mit uv
+# With uv
 uv run bthome_logger.py
 ```
 
-### Verwendung
+### Usage
 
 ```bash
-# Wenn über PyPI/pipx installiert
+# Basic usage (defaults to filtering devices with "MAKE" in name)
 bthome-logger
 
-# Wenn lokal mit uv
-uv run bthome_logger.py
+# Filter by custom device name
+bthome-logger --filter ESP32
+bthome-logger -f MyDevice
 
-# Wenn mit pip -e installiert
-python -m bthome_logger
+# Show all BLE advertisements (verbose mode)
+bthome-logger --verbose
+bthome-logger -v
+
+# Show version
+bthome-logger --version
+
+# Show help
+bthome-logger --help
 ```
 
 ### Features
 
-- ✅ Scannt nach BLE-Geräten mit "MAKE" im Namen
-- ✅ Zeigt BThome v2 Company ID (0xFCD2) erkannt
-- ✅ Dekodiert alle gängigen BThome Object IDs
-- ✅ Farbige Terminal-Ausgabe für bessere Lesbarkeit
-- ✅ Zeigt RSSI-Werte mit Farb-Codierung
-- ✅ Echtzeit-Updates bei neuen Advertisements
-- ✅ Unterstützt verschlüsselte und unverschlüsselte Pakete
+- ✅ Scans for BLE devices with customizable name filter
+- ✅ Detects BThome v2 Company ID (0xFCD2)
+- ✅ Decodes all common BThome Object IDs
+- ✅ Colorized terminal output for better readability
+- ✅ Shows RSSI values with color coding
+- ✅ Real-time updates on new advertisements
+- ✅ Supports encrypted and unencrypted packets
+- ✅ Optional verbose mode to show all BLE advertisements
+- ✅ CLI with `--help` and `--version` support
 
-### Ausgabe-Beispiel
+### Output Example
 
 ```text
 ======================================================================
 🔵 BThome Logger - Python Edition
-Scannt nach BLE-Geräten mit BThome v2 Protocol
+Scans for BLE devices with BThome v2 protocol
 ======================================================================
 
-Filter: Geräte mit 'MAKE' im Namen
-Drücke Ctrl+C zum Beenden
+Filter: Devices with 'MAKE' in name
+Press Ctrl+C to exit
 
-✓ Scanner gestartet...
+✓ Scanner started...
 
 ----------------------------------------------------------------------
 [14:32:45.123] 📱 MAKE-ESP32-S3-TS (XX:XX:XX:XX:XX:XX)
   RSSI: -65 dBm
-  Raw: d2 fc 40 02 b6 10
-  BThome: v2 (unverschlüsselt)
-  Werte:
-    • Temperatur: 42.78 °C
+  Raw: 40 02 b6 10
+  BThome: v2 (unencrypted)
+  Values:
+    • Temperature: 42.78 °C
 ```
 
 ### Troubleshooting
 
-**Problem:** `bleak` kann nicht installiert werden
+**Problem:** `bleak` cannot be installed
 
-**Lösung:** Stelle sicher, dass du Python 3.7+ verwendest:
-
-**Problem:** Keine Bluetooth-Berechtigung
-
-**Lösung (Linux):**
+**Solution:** Make sure you are using Python 3.8+:
 
 ```bash
-# Füge Benutzer zur bluetooth Gruppe hinzu
+python --version
+```
+
+**Problem:** No Bluetooth permissions
+
+**Solution (Linux):**
+
+```bash
+# Add user to bluetooth group
 sudo usermod -a -G bluetooth $USER
 ```
 
-Melde dich danach ab und wieder an oder führe `newgrp bluetooth` aus (wirkt nur für das aktuelle Terminal).
+Log out and back in, or run `newgrp bluetooth` (only affects current terminal).
